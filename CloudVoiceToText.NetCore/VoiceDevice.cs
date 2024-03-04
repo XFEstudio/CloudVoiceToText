@@ -1,9 +1,12 @@
-﻿namespace CloudVoiceToText
+﻿using XFE各类拓展.NetCore.ImplExtension;
+
+namespace CloudVoiceToText.NetCore
 {
     /// <summary>
     /// 音频设备类
     /// </summary>
-    public class VoiceDevice
+    [CreateImpl]
+    public abstract class VoiceDevice
     {
         /// <summary>
         /// 获取字符串名称

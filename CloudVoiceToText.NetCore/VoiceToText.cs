@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 
-namespace CloudVoiceToText
+namespace CloudVoiceToText.NetCore
 {
     /// <summary>
     /// ASR实时转写类
@@ -40,7 +40,7 @@ namespace CloudVoiceToText
         /// <param name="hotWordId">热词ID</param>
         /// <param name="forceHotKey">是否强制使用热词</param>
         /// <returns></returns>
-        public void InitializVTT(string aPPID, string sID, string sKey, string uUID, int maxTime, int deviceNumber, EngineModelType engineModelType, string hotWordId = "", bool forceHotKey = false)
+        public void InitializeVTT(string aPPID, string sID, string sKey, string uUID, int maxTime, int deviceNumber, EngineModelType engineModelType, string hotWordId = "", bool forceHotKey = false)
         {
             this.APPID = aPPID;
             this.sID = sID;
@@ -89,11 +89,11 @@ namespace CloudVoiceToText
         public static List<VoiceDevice> GetVoiceInputDevice()
         {
             var inputDeviceCount = WaveInEvent.DeviceCount;
-            var DeviceList = new List<VoiceDevice> { new VoiceDevice(-1, "录制系统扬声器声音") };
+            var DeviceList = new List<VoiceDevice> { new VoiceDeviceImpl(-1, "录制系统扬声器声音") };
             for (int i = 0; i < inputDeviceCount; i++)
             {
                 var capabilities = WaveInEvent.GetCapabilities(i);
-                DeviceList.Add(new VoiceDevice(i, capabilities.ProductName));
+                DeviceList.Add(new VoiceDeviceImpl(i, capabilities.ProductName));
             }
             return DeviceList;
         }
@@ -194,7 +194,7 @@ namespace CloudVoiceToText
                 byte[] buffer = new byte[1024];
                 ArraySegment<byte> bBytes = new ArraySegment<byte>(buffer);
                 clien.ReceiveAsync(bBytes, CancellationToken.None).Wait();
-                var backMessage = new VTTSentence(Encoding.UTF8.GetString(bBytes.Array));
+                var backMessage = new VTTSentenceImpl(Encoding.UTF8.GetString(bBytes.Array));
                 string validMessage = backMessage.ValidMessage;
                 int backCode = backMessage.Code;
                 if (backCode == 0 && clien.State == WebSocketState.Open)
@@ -267,11 +267,11 @@ namespace CloudVoiceToText
                             if (VTTSentence.Initialize)
                             {
                                 VTTSentence.Initialize = false;
-                                CurrentMessage = new VTTSentence(message);
+                                CurrentMessage = new VTTSentenceImpl(message);
                             }
                             if (!CurrentMessage.IsEmpty)
                             {
-                                CurrentMessage = new VTTSentence(message);
+                                CurrentMessage = new VTTSentenceImpl(message);
                             }
                             else
                             {
@@ -280,7 +280,7 @@ namespace CloudVoiceToText
                             if (!CurrentMessage.IsEmpty)
                             {
                                 SentenceReceived?.Invoke(this, CurrentMessage);
-                                if (CurrentMessage.NowSentenceState == VTTSentence.SentenceState.End)
+                                if (CurrentMessage.NowSentenceState == SentenceState.End)
                                 {
                                     StaticSentenceReceived?.Invoke(this, CurrentMessage);
                                 }
@@ -288,7 +288,7 @@ namespace CloudVoiceToText
                         }
                         catch (Exception ex)
                         {
-                            CurrentMessage = new VTTSentence(ex.Message);
+                            CurrentMessage = new VTTSentenceImpl(ex.Message);
                             SentenceReceived?.Invoke(this, CurrentMessage);
                             StaticSentenceReceived?.Invoke(this, CurrentMessage);
                         }

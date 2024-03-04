@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EngineModelType.cs" />
+    <Compile Include="SentenceState.cs" />
     <Compile Include="VoiceDevice.cs" />
     <Compile Include="VoiceToText.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

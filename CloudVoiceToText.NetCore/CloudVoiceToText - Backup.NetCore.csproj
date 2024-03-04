@@ -12,24 +12,9 @@
     <AssemblyTitle>CloudVoiceToText.NetCore</AssemblyTitle>
     <Product>CloudVoiceToText.NetCore</Product>
     <Copyright>Copyright ©  2023</Copyright>
-    <Authors>XFEstudio</Authors>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Title>CloudVoiceToText.NetCore</Title>
-    <Description>对接腾讯云的语音转文字的.NetCore版本</Description>
-    <PackageProjectUrl>https://github.com/XFEstudio/CloudVoiceToText</PackageProjectUrl>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/XFEstudio/CloudVoiceToText</RepositoryUrl>
-    <PackageTags>XFE;VTT;Tencent;TencentCloud</PackageTags>
-    <PackageReleaseNotes>First Public Release</PackageReleaseNotes>
   </PropertyGroup>
-  <ItemGroup>
-    <None Include="..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />

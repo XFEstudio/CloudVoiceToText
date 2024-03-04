@@ -40,7 +40,7 @@ namespace CloudVoiceToText
         /// <param name="hotWordId">热词ID</param>
         /// <param name="forceHotKey">是否强制使用热词</param>
         /// <returns></returns>
-        public void InitializVTT(string aPPID, string sID, string sKey, string uUID, int maxTime, int deviceNumber, EngineModelType engineModelType, string hotWordId = "", bool forceHotKey = false)
+        public void InitializeVTT(string aPPID, string sID, string sKey, string uUID, int maxTime, int deviceNumber, EngineModelType engineModelType, string hotWordId = "", bool forceHotKey = false)
         {
             this.APPID = aPPID;
             this.sID = sID;
@@ -280,7 +280,7 @@ namespace CloudVoiceToText
                             if (!CurrentMessage.IsEmpty)
                             {
                                 SentenceReceived?.Invoke(this, CurrentMessage);
-                                if (CurrentMessage.NowSentenceState == VTTSentence.SentenceState.End)
+                                if (CurrentMessage.NowSentenceState == SentenceState.End)
                                 {
                                     StaticSentenceReceived?.Invoke(this, CurrentMessage);
                                 }
