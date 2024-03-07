@@ -13,8 +13,6 @@
     <Product>CloudVoiceToText.NetCore</Product>
     <Copyright>Copyright ©  2023</Copyright>
     <Authors>XFEstudio</Authors>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>CloudVoiceToText.NetCore</Title>
     <Description>对接腾讯云的语音转文字的.NetCore版本</Description>
@@ -22,7 +20,8 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/XFEstudio/CloudVoiceToText</RepositoryUrl>
     <PackageTags>XFE;VTT;Tencent;TencentCloud</PackageTags>
-    <PackageReleaseNotes>First Public Release</PackageReleaseNotes>
+    <PackageReleaseNotes>更改包引用</PackageReleaseNotes>
+    <Version>2.0.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\README.md">
@@ -36,13 +35,13 @@
     <PackageReference Include="System.Security.AccessControl" Version="6.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NAudio" Version="2.1.0" />
-    <PackageReference Include="NAudio.Asio" Version="2.1.0" />
-    <PackageReference Include="NAudio.Core" Version="2.1.0" />
-    <PackageReference Include="NAudio.Midi" Version="2.1.0" />
-    <PackageReference Include="NAudio.Wasapi" Version="2.1.0" />
-    <PackageReference Include="NAudio.WinForms" Version="2.1.0" />
-    <PackageReference Include="NAudio.WinMM" Version="2.1.0" />
-    <PackageReference Include="XFE各类拓展.NetCore" Version="1.6.2" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="NAudio.Asio" Version="2.2.1" />
+    <PackageReference Include="NAudio.Core" Version="2.2.1" />
+    <PackageReference Include="NAudio.Midi" Version="2.2.1" />
+    <PackageReference Include="NAudio.Wasapi" Version="2.2.1" />
+    <PackageReference Include="NAudio.WinForms" Version="2.2.1" />
+    <PackageReference Include="NAudio.WinMM" Version="2.2.1" />
+    <PackageReference Include="XFEExtension.NetCore" Version="2.0.0" />
   </ItemGroup>
 </Project>
