@@ -11,18 +11,18 @@ namespace CloudVoiceToText.NetCore
     public abstract class VTTSentence
     {
         #region 内部私有变量
-        private SentenceState nowSentenceState;
-        private bool isEmpty = true;
-        private int code;
-        private int startTime;
-        private int endTime;
-        private int sentenceIndex;
-        private string allMessage;
-        private string text;
-        private string validMessage;
-        private string messageId;
-        private string voiceId;
-        private string backMessage;
+        private protected SentenceState nowSentenceState;
+        private protected bool isEmpty = true;
+        private protected int code;
+        private protected int startTime;
+        private protected int endTime;
+        private protected int sentenceIndex;
+        private protected string allMessage;
+        private protected string text;
+        private protected string validMessage;
+        private protected string messageId;
+        private protected string voiceId;
+        private protected string backMessage;
         #endregion
         internal static bool Initialize { get; set; } = true;
         /// <summary>
@@ -77,7 +77,7 @@ namespace CloudVoiceToText.NetCore
         {
             return str.Replace("\"", string.Empty);
         }
-        private void AnalyzeSentence()
+        private protected void AnalyzeSentence()
         {
             validMessage = RemoveOtherStr(AllMessage);//获取有效消息
             if (validMessage.Count(c => c == '{') == validMessage.Count(c => c == '}'))

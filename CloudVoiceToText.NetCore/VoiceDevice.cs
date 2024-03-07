@@ -19,11 +19,11 @@ namespace CloudVoiceToText.NetCore
         /// <summary>
         /// 当前设备的索引
         /// </summary>
-        public int DeviceIndex { get; } = 0;
+        public int DeviceIndex { get; private protected set; } = 0;
         /// <summary>
         /// 当前设备的名称
         /// </summary>
-        public string DeviceName { get; } = string.Empty;
+        public string DeviceName { get; private protected set; } = string.Empty;
         /// <summary>
         /// 创建一个音频设备类
         /// </summary>
