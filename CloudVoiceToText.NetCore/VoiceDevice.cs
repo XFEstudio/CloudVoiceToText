@@ -1,4 +1,4 @@
-﻿using XFE各类拓展.NetCore.ImplExtension;
+﻿using XFEExtension.NetCore.ImplExtension;
 
 namespace CloudVoiceToText.NetCore
 {

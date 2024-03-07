@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using XFE各类拓展.NetCore.ImplExtension;
+using XFEExtension.NetCore.ImplExtension;
 
 namespace CloudVoiceToText.NetCore
 {
