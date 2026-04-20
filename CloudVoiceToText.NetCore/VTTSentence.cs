@@ -1,6 +1,5 @@
-﻿using System;
-using System.Linq;
-using XFEExtension.NetCore.ImplExtension;
+﻿using XFEExtension.NetCore.AutoImplement;
+using XFEExtension.NetCore.StringExtension;
 
 namespace CloudVoiceToText.NetCore
 {
@@ -10,140 +9,137 @@ namespace CloudVoiceToText.NetCore
     [CreateImpl]
     public abstract class VttSentence
     {
-        #region 内部私有变量
-        private protected SentenceState NowSentenceState;
-        private protected bool IsEmpty = true;
-        private protected int Code;
-        private protected int StartTime;
-        private protected int EndTime;
-        private protected int SentenceIndex;
-        private protected string AllMessage;
-        private protected string Text;
-        private protected string ValidMessage;
-        private protected string MessageId;
-        private protected string VoiceId;
-        private protected string BackMessage;
-        #endregion
         internal static bool Initialize { get; set; } = true;
         /// <summary>
         /// 当前句子的状态（一句话是否识别完毕）
         /// </summary>
-        public SentenceState NowSentenceState { get { return nowSentenceState; } }
+        public SentenceState NowSentenceState { get; private set; }
         /// <summary>
         /// 该消息是否是空消息
         /// </summary>
-        public bool IsEmpty { get { return isEmpty; } }
+        public bool IsEmpty { get; private set; }
         /// <summary>
         /// 状态码，0代表正常，非0值表示发生错误
         /// </summary>
-        public int Code { get { return code; } }
+        public int Code { get; private set; }
         /// <summary>
         /// 当前一段话结果在整个音频流中的起始时间
         /// </summary>
-        public int StartTime { get { return startTime; } }
+        public int StartTime { get; private set; }
         /// <summary>
         /// 当前一段话结果在整个音频流中的结束时间
         /// </summary>
-        public int EndTime { get { return endTime; } }
+        public int EndTime { get; private set; }
         /// <summary>
-        /// 当前一段话结果在整个音频流中的序号，从0开始逐句递增
+        /// 当前一段话结果在整个音频流中的序号，从0条开始逐句递增
         /// </summary>
-        public int SentenceIndex { get { return sentenceIndex; } }
+        public int SentenceIndex { get; private set; }
         /// <summary>
         /// 消息中的所有信息，带格式
         /// </summary>
-        public string AllMessage { get { return allMessage; } }
+        public string AllMessage { get; private set; }
         /// <summary>
         /// 当前一段话文本结果，编码为 UTF8
         /// </summary>
-        public string Text { get { return text; } }
+        public string Text { get; private set; } = string.Empty;
         /// <summary>
         /// 消息中的所有信息去除双引号后的内容
         /// </summary>
-        public string ValidMessage { get { return validMessage; } }
+        public string ValidMessage { get; private set; } = string.Empty;
         /// <summary>
         /// 本 message 唯一 id
         /// </summary>
-        public string MessageId { get { return MessageId; } }
+        public string MessageId { get; private set; } = string.Empty;
         /// <summary>
         /// 音频流唯一 id，由客户端在握手阶段生成并赋值在调用参数中
         /// </summary>
-        public string VoiceId { get { return VoiceId; } }
+        public string VoiceId { get; private set; } = string.Empty;
         /// <summary>
         /// 错误说明，发生错误时显示这个错误发生的具体原因，随着业务发展或体验优化，此文本可能会经常保持变更或更新
         /// </summary>
-        public string BackMessage { get { return backMessage; } }
-        private static string RemoveOtherStr(string str)
+        public string BackMessage { get; private set; } = string.Empty;
+
+        /// <summary>
+        /// 创建VTTSentence消息
+        /// </summary>
+        /// <param name="allMessage">总消息</param>
+        protected VttSentence(string allMessage)
         {
-            return str.Replace("\"", string.Empty);
+            AllMessage = allMessage;
+            AnalyzeSentence();
         }
+
+        private static string RemoveOtherString(string str) => str.Replace("\"", string.Empty);
+
         private protected void AnalyzeSentence()
         {
-            validMessage = RemoveOtherStr(AllMessage);//获取有效消息
-            if (validMessage.Count(c => c == '{') == validMessage.Count(c => c == '}'))
+            ValidMessage = RemoveOtherString(AllMessage); //获取有效消息
+            if (ValidMessage.Count(c => c == '{') == ValidMessage.Count(c => c == '}'))
             {
-                isEmpty = false;
-                text = GetStringBetweenTwoString(AllMessage, "voice_text_str\":\"", "\",");//获取正文消息
-                backMessage = GetStringBetweenTwoString(ValidMessage, "message\":\"", "\",");//获取返回信息
-                VoiceId = GetStringBetweenTwoString(ValidMessage, "voice_id:", ",");//获取该次声音的ID
-                MessageId = GetStringBetweenTwoString(ValidMessage, "message_id:", ",");//获取该次消息的ID
-                                                                                        //获取起始时间
-                if (int.TryParse(GetStringBetweenTwoString(ValidMessage, "start_time:", ","), out int startTime))
+                IsEmpty = false;
+                Text = GetStringBetweenTwoString(AllMessage, "voice_text_str\":\"", "\","); //获取正文消息
+                BackMessage = GetStringBetweenTwoString(ValidMessage, "message\":\"", "\","); //获取返回信息
+                VoiceId = GetStringBetweenTwoString(ValidMessage, "voice_id:", ","); //获取该次声音的ID
+                MessageId = GetStringBetweenTwoString(ValidMessage, "message_id:", ","); //获取该次消息的ID
+                //获取起始时间
+                if (int.TryParse(GetStringBetweenTwoString(ValidMessage, "start_time:", ","), out var startTime))
                 {
-                    this.startTime = startTime;
+                    this.StartTime = startTime;
                 }
                 else
                 {
-                    this.startTime = -1;
+                    this.StartTime = -1;
                 }
                 //获取终止时间
-                if (int.TryParse(GetStringBetweenTwoString(ValidMessage, "end_time:", ","), out int endTime))
+                if (int.TryParse(GetStringBetweenTwoString(ValidMessage, "end_time:", ","), out var endTime))
                 {
-                    this.endTime = endTime;
+                    this.EndTime = endTime;
                 }
                 else
                 {
-                    this.endTime = -1;
+                    this.EndTime = -1;
                 }
                 //获取起始序号
-                if (int.TryParse(GetStringBetweenTwoString(ValidMessage, "index:", ","), out int startIndex))
+                if (int.TryParse(GetStringBetweenTwoString(ValidMessage, "index:", ","), out var startIndex))
                 {
-                    sentenceIndex = startIndex;
+                    SentenceIndex = startIndex;
                 }
                 else
                 {
-                    sentenceIndex = -1;
+                    SentenceIndex = -1;
                 }
                 //获取CodeBlock返回值
-                if (int.TryParse(GetStringBetweenTwoString(ValidMessage, "code:", ","), out int intCode))
+                if (int.TryParse(GetStringBetweenTwoString(ValidMessage, "code:", ","), out var intCode))
                 {
-                    code = intCode;
+                    Code = intCode;
                 }
                 else
                 {
-                    code = -1;
+                    Code = -1;
                 }
                 //获取句子状态
-                if (int.TryParse(GetStringBetweenTwoString(ValidMessage, "slice_type:", ","), out int state))
+                if (!int.TryParse(GetStringBetweenTwoString(ValidMessage, "slice_type:", ","), out var state))
+                    return;
+                NowSentenceState = state switch
                 {
-                    switch (state)
-                    {
-                        case 0: nowSentenceState = SentenceState.Begin; break;
-                        case 1: nowSentenceState = SentenceState.Continue; break;
-                        case 2: nowSentenceState = SentenceState.End; break;
-                    }
-                }
+                    0 => SentenceState.Begin,
+                    1 => SentenceState.Continue,
+                    2 => SentenceState.End,
+                    _ => NowSentenceState
+                };
             }
             else
             {
-                isEmpty = true;
+                IsEmpty = true;
             }
         }
+
         internal void AppendSentence(string sentence)
         {
-            allMessage += sentence;
+            AllMessage += sentence;
             AnalyzeSentence();
         }
+
         /// <summary>
         /// 获取所有消息
         /// </summary>
@@ -152,6 +148,7 @@ namespace CloudVoiceToText.NetCore
         {
             return AllMessage;
         }
+
         /// <summary>
         /// 根据给定的开头和末尾返回查找到的第一个匹配的字符串（全匹配）
         /// </summary>
@@ -161,42 +158,22 @@ namespace CloudVoiceToText.NetCore
         /// <returns>返回夹在开头和末尾中间的字符串</returns>
         public static string GetStringBetweenTwoString(string str, string beginStr, string endStr)
         {
-            if (str != string.Empty && str != null)
-            {
-                int beginIndex = str.IndexOf(beginStr, StringComparison.Ordinal);
-                if (beginIndex == -1 || beginIndex == 0)
-                {
-                    return string.Empty;
-                }
-                int endIndex = str.IndexOf(endStr, beginIndex, StringComparison.Ordinal);
-                if (endIndex == -1 || endIndex == 0)
-                {
-                    return string.Empty;
-                }
-                return str.Substring(beginIndex + beginStr.Length, endIndex - beginIndex - beginStr.Length);
-            }
-            else
+            if (!str.NullOrWhiteSpace)
+                return string.Empty;
+            var beginIndex = str.IndexOf(beginStr, StringComparison.Ordinal);
+            if (beginIndex is -1 or 0)
             {
                 return string.Empty;
             }
+            var endIndex = str.IndexOf(endStr, beginIndex, StringComparison.Ordinal);
+            return endIndex is -1 or 0 ? string.Empty : str.Substring(beginIndex + beginStr.Length, endIndex - beginIndex - beginStr.Length);
         }
+
         /// <summary>
         /// 通过给定的文本格式查找对应的字段
         /// </summary>
         /// <param name="form">查找的文本格式</param>
         /// <returns></returns>
-        public string GetTextByForm(string form)
-        {
-            return GetStringBetweenTwoString(ValidMessage, form + ":", ",");
-        }
-        /// <summary>
-        /// 创建VTTSentence消息
-        /// </summary>
-        /// <param name="allMessage">总消息</param>
-        public VttSentence(string allMessage)
-        {
-            this.allMessage = allMessage;
-            AnalyzeSentence();
-        }
+        public string GetTextByForm(string form) => GetStringBetweenTwoString(ValidMessage, form + ":", ",");
     }
 }
