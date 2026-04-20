@@ -8,21 +8,21 @@ namespace CloudVoiceToText.NetCore
     /// 包含了CVTT输出句子的解析
     /// </summary>
     [CreateImpl]
-    public abstract class VTTSentence
+    public abstract class VttSentence
     {
         #region 内部私有变量
-        private protected SentenceState nowSentenceState;
-        private protected bool isEmpty = true;
-        private protected int code;
-        private protected int startTime;
-        private protected int endTime;
-        private protected int sentenceIndex;
-        private protected string allMessage;
-        private protected string text;
-        private protected string validMessage;
-        private protected string messageId;
-        private protected string voiceId;
-        private protected string backMessage;
+        private protected SentenceState NowSentenceState;
+        private protected bool IsEmpty = true;
+        private protected int Code;
+        private protected int StartTime;
+        private protected int EndTime;
+        private protected int SentenceIndex;
+        private protected string AllMessage;
+        private protected string Text;
+        private protected string ValidMessage;
+        private protected string MessageId;
+        private protected string VoiceId;
+        private protected string BackMessage;
         #endregion
         internal static bool Initialize { get; set; } = true;
         /// <summary>
@@ -64,11 +64,11 @@ namespace CloudVoiceToText.NetCore
         /// <summary>
         /// 本 message 唯一 id
         /// </summary>
-        public string MessageID { get { return messageId; } }
+        public string MessageId { get { return MessageId; } }
         /// <summary>
         /// 音频流唯一 id，由客户端在握手阶段生成并赋值在调用参数中
         /// </summary>
-        public string VoiceID { get { return voiceId; } }
+        public string VoiceId { get { return VoiceId; } }
         /// <summary>
         /// 错误说明，发生错误时显示这个错误发生的具体原因，随着业务发展或体验优化，此文本可能会经常保持变更或更新
         /// </summary>
@@ -85,8 +85,8 @@ namespace CloudVoiceToText.NetCore
                 isEmpty = false;
                 text = GetStringBetweenTwoString(AllMessage, "voice_text_str\":\"", "\",");//获取正文消息
                 backMessage = GetStringBetweenTwoString(ValidMessage, "message\":\"", "\",");//获取返回信息
-                voiceId = GetStringBetweenTwoString(ValidMessage, "voice_id:", ",");//获取该次声音的ID
-                messageId = GetStringBetweenTwoString(ValidMessage, "message_id:", ",");//获取该次消息的ID
+                VoiceId = GetStringBetweenTwoString(ValidMessage, "voice_id:", ",");//获取该次声音的ID
+                MessageId = GetStringBetweenTwoString(ValidMessage, "message_id:", ",");//获取该次消息的ID
                                                                                         //获取起始时间
                 if (int.TryParse(GetStringBetweenTwoString(ValidMessage, "start_time:", ","), out int startTime))
                 {
@@ -193,7 +193,7 @@ namespace CloudVoiceToText.NetCore
         /// 创建VTTSentence消息
         /// </summary>
         /// <param name="allMessage">总消息</param>
-        public VTTSentence(string allMessage)
+        public VttSentence(string allMessage)
         {
             this.allMessage = allMessage;
             AnalyzeSentence();

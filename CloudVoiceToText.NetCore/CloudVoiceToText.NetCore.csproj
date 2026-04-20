@@ -1,27 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>Library</OutputType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\..\..\DLL\实时转写\</OutputPath>
-    <DocumentationFile>..\..\..\DLL\实时转写\CloudVoiceToText.NetCore.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <AssemblyTitle>CloudVoiceToText.NetCore</AssemblyTitle>
-    <Product>CloudVoiceToText.NetCore</Product>
-    <Copyright>Copyright ©  2023</Copyright>
-    <Authors>XFEstudio</Authors>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <TargetFramework>net10.0-windows10.0.22621.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Version>2.0.0</Version>
     <Title>CloudVoiceToText.NetCore</Title>
+    <RepositoryUrl>https://github.com/XFEstudio/CloudVoiceToText</RepositoryUrl>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <PackAsTool>False</PackAsTool>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <SignAssembly>True</SignAssembly>
+    <Product>CloudVoiceToText.NetCore</Product>
+    <Copyright>Copyright © 2023</Copyright>
+    <Authors>XFEstudio</Authors>
     <Description>对接腾讯云的语音转文字的.NetCore版本</Description>
     <PackageProjectUrl>https://github.com/XFEstudio/CloudVoiceToText</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/XFEstudio/CloudVoiceToText</RepositoryUrl>
     <PackageTags>XFE;VTT;Tencent;TencentCloud</PackageTags>
     <PackageReleaseNotes>更改包引用</PackageReleaseNotes>
-    <Version>2.0.0</Version>
+    <OutputType>Library</OutputType>
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\README.md">
@@ -30,18 +29,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="System.Security.AccessControl" Version="6.0.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="NAudio" Version="2.2.1" />
-    <PackageReference Include="NAudio.Asio" Version="2.2.1" />
-    <PackageReference Include="NAudio.Core" Version="2.2.1" />
-    <PackageReference Include="NAudio.Midi" Version="2.2.1" />
-    <PackageReference Include="NAudio.Wasapi" Version="2.2.1" />
-    <PackageReference Include="NAudio.WinForms" Version="2.2.1" />
-    <PackageReference Include="NAudio.WinMM" Version="2.2.1" />
-    <PackageReference Include="XFEExtension.NetCore" Version="2.0.0" />
+    <PackageReference Include="NAudio" Version="2.3.0" />
+    <PackageReference Include="NAudio.Asio" Version="2.3.0" />
+    <PackageReference Include="NAudio.Core" Version="2.3.0" />
+    <PackageReference Include="NAudio.Midi" Version="2.3.0" />
+    <PackageReference Include="NAudio.Wasapi" Version="2.3.0" />
+    <PackageReference Include="NAudio.WinForms" Version="2.3.0" />
+    <PackageReference Include="NAudio.WinMM" Version="2.3.0" />
+    <PackageReference Include="XFEExtension.NetCore" Version="4.2.0" />
+    <PackageReference Include="XFEExtension.NetCore.AutoImplement" Version="1.1.0" />
   </ItemGroup>
 </Project>
