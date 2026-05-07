@@ -108,24 +108,24 @@ public class VoiceToText
         _isFinal = false;
         var modelType = _engineModelType switch
         {
-            EngineModelType.P16KZh => "16k_zh",
-            EngineModelType.P16KZhPy => "16k_zh-PY",
-            EngineModelType.P16KZhTw => "16k_zh-TW",
-            EngineModelType.P16KZhEdu => "16k_zh_edu",
-            EngineModelType.P16KZhMedical => "16k_zh_medical",
-            EngineModelType.P16KZhCourt => "16k_zh_court",
-            EngineModelType.P16KEn => "16k_en",
-            EngineModelType.P16KEnGame => "16k_en_game",
-            EngineModelType.P16KEnEdu => "16k_en_edu",
-            EngineModelType.P16KKo => "16k_ko",
-            EngineModelType.P16KJa => "16k_ja",
-            EngineModelType.P16KTh => "16k_th",
-            EngineModelType.P16KId => "16k_id",
-            EngineModelType.P16KVi => "16k_vi",
-            EngineModelType.P16KMs => "16k_ms",
-            EngineModelType.P16KFil => "16k_fil",
-            EngineModelType.P16KCa => "16k_ca",
-            EngineModelType.P16KZhDialect => "16k_zh_dialect",
+            EngineModelType.P16k_zh => "16k_zh",
+            EngineModelType.P16k_zh_PY => "16k_zh-PY",
+            EngineModelType.P16k_zh_TW => "16k_zh-TW",
+            EngineModelType.P16k_zh_edu => "16k_zh_edu",
+            EngineModelType.P16k_zh_medical => "16k_zh_medical",
+            EngineModelType.P16k_zh_court => "16k_zh_court",
+            EngineModelType.P16k_en => "16k_en",
+            EngineModelType.P16k_en_game => "16k_en_game",
+            EngineModelType.P16k_en_edu => "16k_en_edu",
+            EngineModelType.P16k_ko => "16k_ko",
+            EngineModelType.P16k_ja => "16k_ja",
+            EngineModelType.P16k_th => "16k_th",
+            EngineModelType.P16k_id => "16k_id",
+            EngineModelType.P16k_vi => "16k_vi",
+            EngineModelType.P16k_ms => "16k_ms",
+            EngineModelType.P16k_fil => "16k_fil",
+            EngineModelType.P16k_ca => "16k_ca",
+            EngineModelType.P16k_zh_dialect => "16k_zh_dialect",
             _ => string.Empty
         };
         var tp = DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0);//设置当前的UNIX时间戳
@@ -158,7 +158,7 @@ public class VoiceToText
             var buffer = new byte[1024];
             var bBytes = new ArraySegment<byte>(buffer);
             _clientWebSocket.ReceiveAsync(bBytes, CancellationToken.None).Wait();
-            var backMessage = new VTTSentenceImpl(Encoding.UTF8.GetString(bBytes.Array ?? []));
+            var backMessage = new VttSentenceImpl(Encoding.UTF8.GetString(bBytes.Array ?? []));
             int backCode = backMessage.Code;
             if (backCode == 0 && _clientWebSocket.State == WebSocketState.Open)
             {
@@ -240,14 +240,14 @@ public class VoiceToText
                         if (VttSentence.Initialize)
                         {
                             VttSentence.Initialize = false;
-                            _currentMessage = new VTTSentenceImpl(message);
+                            _currentMessage = new VttSentenceImpl(message);
                         }
                         if (_currentMessage is
                             {
                                 IsEmpty: false
                             })
                         {
-                            _currentMessage = new VTTSentenceImpl(message);
+                            _currentMessage = new VttSentenceImpl(message);
                         }
                         else
                         {
@@ -267,7 +267,7 @@ public class VoiceToText
                     }
                     catch (Exception ex)
                     {
-                        _currentMessage = new VTTSentenceImpl(ex.Message);
+                        _currentMessage = new VttSentenceImpl(ex.Message);
                         SentenceReceived?.Invoke(this, _currentMessage);
                         StaticSentenceReceived?.Invoke(this, _currentMessage);
                     }
