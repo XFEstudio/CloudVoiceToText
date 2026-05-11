@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
+using CloudVoiceToText.NetCore.Models;
 using NAudio.Wave;
 
 namespace CloudVoiceToText.NetCore;
@@ -160,7 +161,7 @@ public class VoiceToText
             _clientWebSocket.ReceiveAsync(bBytes, CancellationToken.None).Wait();
             var backMessage = new VttSentenceImpl(Encoding.UTF8.GetString(bBytes.Array ?? []));
             int backCode = backMessage.Code;
-            if (backCode == 0 && _clientWebSocket.State == WebSocketState.Open)
+            if ( _clientWebSocket.State == WebSocketState.Open)
             {
                 //判断是否录制系统声音
                 if (_deviceNumber == -1)

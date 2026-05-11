@@ -1,4 +1,4 @@
-﻿namespace CloudVoiceToText.NetCore;
+﻿namespace CloudVoiceToText.NetCore.Models;
 
 /// <summary>
 /// 用于枚举转写模型类型

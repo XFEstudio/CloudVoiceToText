@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudVoiceToText", "CloudVo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudVoiceToText.NetCore", "CloudVoiceToText.NetCore\CloudVoiceToText.NetCore.csproj", "{5F9710C3-3BFB-4DA2-8659-13772D00EDF0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudVoiceToText.NetCore.Test", "CloudVoiceToText.NetCore.Test\CloudVoiceToText.NetCore.Test.csproj", "{62A18D3E-79BF-448B-892E-6231A01C9724}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{5F9710C3-3BFB-4DA2-8659-13772D00EDF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F9710C3-3BFB-4DA2-8659-13772D00EDF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F9710C3-3BFB-4DA2-8659-13772D00EDF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62A18D3E-79BF-448B-892E-6231A01C9724}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62A18D3E-79BF-448B-892E-6231A01C9724}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62A18D3E-79BF-448B-892E-6231A01C9724}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62A18D3E-79BF-448B-892E-6231A01C9724}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
