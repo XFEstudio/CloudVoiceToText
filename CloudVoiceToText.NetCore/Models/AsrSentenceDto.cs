@@ -1,3 +1,4 @@
+using CloudVoiceToText.NetCore.Utilities.Converters;
 using System.Text.Json.Serialization;
 using XFEExtension.NetCore.AutoImplement;
 
@@ -33,5 +34,6 @@ public abstract class AsrSentenceDto
     /// 识别结果
     /// </summary>
     [JsonPropertyName("result")]
+    [JsonConverter(typeof(AsrSentenceResultDtoJsonConverter))]
     public AsrSentenceResultDto? Result { get; set; } = null;
 }
