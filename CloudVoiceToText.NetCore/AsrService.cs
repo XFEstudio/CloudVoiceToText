@@ -30,13 +30,13 @@ public class AsrService(string appId, string secretId, string secretKey, string 
     /// </summary>
     public bool Closed { get; private set; } = true;
     /// <summary>
-    /// 现在返回的消息（非稳定消息，消息可能随时变化）
+    /// 现在返回的消息（非完整消息，消息可能随时变化）
     /// </summary>
     public event EventHandler<AsrServiceEventArgs>? SentenceReceived;
     /// <summary>
-    /// 现在返回的稳定消息
+    /// 现在返回的完整消息
     /// </summary>
-    public event EventHandler<AsrServiceEventArgs>? StaticSentenceReceived;
+    public event EventHandler<AsrServiceEventArgs>? CompleteSentenceReceived;
 
     /// <summary>
     /// 获取当前的音频输入设备列表
@@ -63,8 +63,8 @@ public class AsrService(string appId, string secretId, string secretKey, string 
     /// <returns>随机UUID</returns>
     public static string GetRandomUuid()
     {
-        var r = new Random();
-        return $"{r.Next(1000, 1000000)}{r.Next(1000, 1000000)}";
+        var random = new Random();
+        return $"{random.Next(1000, 1000000)}{random.Next(1000, 1000000)}";
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ public class AsrService(string appId, string secretId, string secretKey, string 
             var buffer = new byte[1024];
             await _clientWebSocket.ReceiveAsync(buffer, CancellationToken.None);
             var response = Encoding.UTF8.GetString(buffer);
-            var responseObject = JsonSerializer.Deserialize<AsrSentenceDto>(response);
+            var responseObject = JsonSerializer.Deserialize<AsrSentenceDtoImpl>(response);
             var code = responseObject?.Code ?? -1;
             var result = new AsrSentenceImpl(responseObject);
             if (_clientWebSocket.State == WebSocketState.Open)
@@ -185,7 +185,7 @@ public class AsrService(string appId, string secretId, string secretKey, string 
                     {
                         await _clientWebSocket.ReceiveAsync(new ArraySegment<byte>(buffer, 0, buffer.Length), CancellationToken.None);
                         response = Encoding.UTF8.GetString(buffer);
-                        responseObject = JsonSerializer.Deserialize<AsrSentenceDto>(response);
+                        responseObject = JsonSerializer.Deserialize<AsrSentenceDtoImpl>(response);
                         if (responseObject is not null)
                         {
                             result = new AsrSentenceImpl(responseObject);
@@ -197,7 +197,7 @@ public class AsrService(string appId, string secretId, string secretKey, string 
                             });
                             if (result.SentenceState == SentenceState.End)
                             {
-                                StaticSentenceReceived?.Invoke(this, new AsrServiceEventArgs
+                                CompleteSentenceReceived?.Invoke(this, new AsrServiceEventArgs
                                 {
                                     Success = true,
                                     AsrSentence = result,
@@ -212,7 +212,7 @@ public class AsrService(string appId, string secretId, string secretKey, string 
                                 Success = false,
                                 Message = response
                             });
-                            StaticSentenceReceived?.Invoke(this, new AsrServiceEventArgs
+                            CompleteSentenceReceived?.Invoke(this, new AsrServiceEventArgs
                             {
                                 Success = false,
                                 Message = response
@@ -226,7 +226,7 @@ public class AsrService(string appId, string secretId, string secretKey, string 
                             Success = false,
                             Message = ex.Message
                         });
-                        StaticSentenceReceived?.Invoke(this, new AsrServiceEventArgs
+                        CompleteSentenceReceived?.Invoke(this, new AsrServiceEventArgs
                         {
                             Success = false,
                             Message = ex.Message

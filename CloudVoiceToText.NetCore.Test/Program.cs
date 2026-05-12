@@ -1,9 +1,18 @@
-﻿using CloudVoiceToText.NetCore.Models;
+﻿using System.Text.Json;
+using CloudVoiceToText.NetCore.Models;
 
 namespace CloudVoiceToText.NetCore.Test;
 
 public class Program
 {
+    // [SMTest]
+    public static AsrSentenceDto? TestJsonSerialize() => JsonSerializer.Deserialize<AsrSentenceDtoImpl>("""
+                                                                                                        {
+                                                                                                          "code" : 0,
+                                                                                                          "message" : "success",
+                                                                                                          "voice_id" : "910381956841"
+                                                                                                        }
+                                                                                                        """);
     [SMTest]
     public static async Task TestAsr()
     {
@@ -13,11 +22,18 @@ public class Program
             Console.WriteLine(voiceDevice);
         }
         var index = Console.ReadLine();
-        var vtt = new AsrService("***REMOVED***", "***REMOVED***", "***REMOVED***", AsrService.GetRandomUuid(), 600, int.Parse(index ?? "-1"), EngineModelType.P16k_zh);
-        vtt.SentenceReceived += (sender, sentence) =>
+        var asrService = new AsrService("***REMOVED***", "***REMOVED***", "***REMOVED***", AsrService.GetRandomUuid(), 600, int.Parse(index ?? "-1"), EngineModelType.P16k_zh);
+        asrService.SentenceReceived += (_, args) =>
         {
-            Console.WriteLine(sentence);
+            if (args.Success)
+            {
+                Console.WriteLine(args.AsrSentence);
+            }
+            else
+            {
+                Console.WriteLine($"[ERROR] {args.Message}");
+            }
         };
-        await vtt.StartAsr();
+        await asrService.StartAsr();
     }
 }

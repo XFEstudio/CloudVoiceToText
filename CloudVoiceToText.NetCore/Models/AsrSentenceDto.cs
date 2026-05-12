@@ -6,7 +6,7 @@ namespace CloudVoiceToText.NetCore.Models;
 /// <summary>
 /// 转文本的响应
 /// </summary>
-[CreateImpl]
+[CreateImpl(Modifiers = ["public"])]
 public abstract class AsrSentenceDto
 {
     /// <summary>
@@ -23,7 +23,7 @@ public abstract class AsrSentenceDto
     /// 本 message 唯一 id
     /// </summary>
     [JsonPropertyName("message_id")]
-    public string MessageId { get; private set; } = string.Empty;
+    public string? MessageId { get; private set; } = string.Empty;
     /// <summary>
     /// 音频流唯一 id，由客户端在握手阶段生成并赋值在调用参数中
     /// </summary>
