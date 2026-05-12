@@ -16,5 +16,9 @@ public enum SentenceState
     /// <summary>
     /// 一段话识别结束，句子为稳态结果(该段识别结果不再变化)
     /// </summary>
-    End = 2
+    End = 2,
+    /// <summary>
+    /// 未知状态
+    /// </summary>
+    Unknown = 3
 }

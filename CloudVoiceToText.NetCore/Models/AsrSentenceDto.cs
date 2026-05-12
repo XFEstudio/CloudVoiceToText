@@ -7,7 +7,7 @@ namespace CloudVoiceToText.NetCore.Models;
 /// 转文本的响应
 /// </summary>
 [CreateImpl]
-public abstract class VttSentenceDto
+public abstract class AsrSentenceDto
 {
     /// <summary>
     /// 状态码，0代表正常，非0值表示发生错误
@@ -33,5 +33,5 @@ public abstract class VttSentenceDto
     /// 识别结果
     /// </summary>
     [JsonPropertyName("result")]
-    public VttSentenceResultDto? Result { get; set; } = null;
+    public AsrSentenceResultDto? Result { get; set; } = null;
 }

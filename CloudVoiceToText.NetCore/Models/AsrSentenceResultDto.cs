@@ -7,7 +7,7 @@ namespace CloudVoiceToText.NetCore.Models;
 /// 转文本的响应结果
 /// </summary>
 [CreateImpl]
-public abstract class VttSentenceResultDto
+public abstract class AsrSentenceResultDto
 {
     /// <summary>
     /// 片段类型
