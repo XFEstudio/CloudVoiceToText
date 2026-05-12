@@ -6,13 +6,13 @@ namespace CloudVoiceToText.NetCore.Test;
 public class Program
 {
     // [SMTest]
-    public static AsrSentenceDto? TestJsonSerialize() => JsonSerializer.Deserialize<AsrSentenceDtoImpl>("""
-                                                                                                        {
-                                                                                                          "code" : 0,
-                                                                                                          "message" : "success",
-                                                                                                          "voice_id" : "910381956841"
-                                                                                                        }
-                                                                                                        """);
+    public static AsrStartDto? TestJsonSerialize() => JsonSerializer.Deserialize<AsrStartDtoImpl>("""
+                                                                                                      {
+                                                                                                        "code" : 0,
+                                                                                                        "message" : "success",
+                                                                                                        "voice_id" : "910381956841"
+                                                                                                      }
+                                                                                                      """);
     [SMTest]
     public static async Task TestAsr()
     {

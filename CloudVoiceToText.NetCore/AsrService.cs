@@ -92,11 +92,10 @@ public class AsrService(string appId, string secretId, string secretKey, string 
             })
         {
             var buffer = new byte[1024];
-            await _clientWebSocket.ReceiveAsync(buffer, CancellationToken.None);
-            var response = Encoding.UTF8.GetString(buffer);
-            var responseObject = JsonSerializer.Deserialize<AsrSentenceDtoImpl>(response);
-            var code = responseObject?.Code ?? -1;
-            var result = new AsrSentenceImpl(responseObject);
+            var response= await _clientWebSocket.ReceiveAsync(buffer, CancellationToken.None);
+            var responseString = Encoding.UTF8.GetString(buffer, 0, response.Count);
+            var startResponseObject = JsonSerializer.Deserialize<AsrStartDtoImpl>(responseString);
+            var code = startResponseObject?.Code ?? -1;
             if (_clientWebSocket.State == WebSocketState.Open)
             {
                 //判断是否录制系统声音
@@ -183,17 +182,17 @@ public class AsrService(string appId, string secretId, string secretKey, string 
                 {
                     try
                     {
-                        await _clientWebSocket.ReceiveAsync(new ArraySegment<byte>(buffer, 0, buffer.Length), CancellationToken.None);
-                        response = Encoding.UTF8.GetString(buffer);
-                        responseObject = JsonSerializer.Deserialize<AsrSentenceDtoImpl>(response);
+                        response = await _clientWebSocket.ReceiveAsync(new ArraySegment<byte>(buffer, 0, buffer.Length), CancellationToken.None);
+                        responseString = Encoding.UTF8.GetString(buffer, 0, response.Count);
+                        var responseObject = JsonSerializer.Deserialize<AsrSentenceDtoImpl>(responseString);
                         if (responseObject is not null)
                         {
-                            result = new AsrSentenceImpl(responseObject);
+                            var result = new AsrSentenceImpl(responseObject);
                             SentenceReceived?.Invoke(this, new AsrServiceEventArgs
                             {
                                 Success = true,
                                 AsrSentence = result,
-                                Message = response
+                                Message = responseString
                             });
                             if (result.SentenceState == SentenceState.End)
                             {
@@ -201,7 +200,7 @@ public class AsrService(string appId, string secretId, string secretKey, string 
                                 {
                                     Success = true,
                                     AsrSentence = result,
-                                    Message = response
+                                    Message = responseString
                                 });
                             }
                         }
@@ -210,12 +209,12 @@ public class AsrService(string appId, string secretId, string secretKey, string 
                             SentenceReceived?.Invoke(this, new AsrServiceEventArgs
                             {
                                 Success = false,
-                                Message = response
+                                Message = responseString
                             });
                             CompleteSentenceReceived?.Invoke(this, new AsrServiceEventArgs
                             {
                                 Success = false,
-                                Message = response
+                                Message = responseString
                             });
                         }
                     }
@@ -237,7 +236,7 @@ public class AsrService(string appId, string secretId, string secretKey, string 
             else
             {
                 Console.WriteLine("出现错误！错误代码：" + code);
-                Console.WriteLine(result.Response.Message);
+                Console.WriteLine(responseString);
             }
         }
         else
