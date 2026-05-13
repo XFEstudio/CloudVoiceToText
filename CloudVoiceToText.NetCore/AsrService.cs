@@ -91,9 +91,16 @@ public class AsrService(string appId, string secretId, string secretKey, string 
                 State: WebSocketState.Open
             })
         {
-            var buffer = new byte[1024];
-            var response= await _clientWebSocket.ReceiveAsync(buffer, CancellationToken.None);
-            var responseString = Encoding.UTF8.GetString(buffer, 0, response.Count);
+            var bufferList = new List<byte>();
+            var receiveBuffer = new byte[1024];
+            var receiveResult = await _clientWebSocket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+            bufferList.AddRange(receiveBuffer.Take(receiveResult.Count));
+            while (!receiveResult.EndOfMessage)
+            {
+                receiveResult = await _clientWebSocket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                bufferList.AddRange(receiveBuffer.Take(receiveResult.Count));
+            }
+            var responseString = Encoding.UTF8.GetString(bufferList.ToArray());
             var startResponseObject = JsonSerializer.Deserialize<AsrStartDtoImpl>(responseString);
             var code = startResponseObject?.Code ?? -1;
             if (_clientWebSocket.State == WebSocketState.Open)
@@ -105,7 +112,7 @@ public class AsrService(string appId, string secretId, string secretKey, string 
                     _waveInWay = capture;
                     capture.WaveFormat = new WaveFormat(16000, 16, 1);
                     // 添加事件处理程序来处理音频数据
-                    capture.DataAvailable += async (sender, aArgs) =>
+                    capture.DataAvailable += async (_, aArgs) =>
                     {
                         switch (_clientWebSocket.State)
                         {
@@ -125,14 +132,14 @@ public class AsrService(string appId, string secretId, string secretKey, string 
                             case WebSocketState.Closed:
                             case WebSocketState.Aborted:
                             default:
+                            {
+                                if (!Closed)
                                 {
-                                    if (!Closed)
-                                    {
-                                        capture.StopRecording();
-                                        Console.WriteLine("失去Web连接");
-                                    }
-                                    break;
+                                    capture.StopRecording();
+                                    Console.WriteLine("失去Web连接");
                                 }
+                                break;
+                            }
                         }
                     };
                     // 开始录制
@@ -145,7 +152,7 @@ public class AsrService(string appId, string secretId, string secretKey, string 
                     waveIn.WaveFormat = new WaveFormat(16000, 16, 1);
                     waveIn.DeviceNumber = deviceIndex;
                     // 添加事件处理程序来处理音频数据
-                    waveIn.DataAvailable += async (sender, aArgs) =>
+                    waveIn.DataAvailable += async (_, aArgs) =>
                     {
                         switch (_clientWebSocket.State)
                         {
@@ -165,14 +172,14 @@ public class AsrService(string appId, string secretId, string secretKey, string 
                             case WebSocketState.Closed:
                             case WebSocketState.Aborted:
                             default:
+                            {
+                                if (!Closed)
                                 {
-                                    if (!Closed)
-                                    {
-                                        waveIn.StopRecording();
-                                        Console.WriteLine("失去Web连接");
-                                    }
-                                    break;
+                                    waveIn.StopRecording();
+                                    Console.WriteLine("失去Web连接");
                                 }
+                                break;
+                            }
                         }
                     };
                     // 开始录制
@@ -182,8 +189,16 @@ public class AsrService(string appId, string secretId, string secretKey, string 
                 {
                     try
                     {
-                        response = await _clientWebSocket.ReceiveAsync(new ArraySegment<byte>(buffer, 0, buffer.Length), CancellationToken.None);
-                        responseString = Encoding.UTF8.GetString(buffer, 0, response.Count);
+                        bufferList = [];
+                        receiveBuffer = new byte[1024];
+                        receiveResult = await _clientWebSocket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                        bufferList.AddRange(receiveBuffer.Take(receiveResult.Count));
+                        while (!receiveResult.EndOfMessage)
+                        {
+                            receiveResult = await _clientWebSocket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                            bufferList.AddRange(receiveBuffer.Take(receiveResult.Count));
+                        }
+                        responseString = Encoding.UTF8.GetString(bufferList.ToArray());
                         var responseObject = JsonSerializer.Deserialize<AsrSentenceDtoImpl>(responseString);
                         if (responseObject is not null)
                         {
@@ -266,10 +281,12 @@ public class AsrService(string appId, string secretId, string secretKey, string 
     private string SummonSignature(string modelType, int forceHotKey)
     {
         var timeStamp = DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0);
-        var ultSign = $"asr.cloud.tencent.com/asr/v2/{appId}?engine_model_type={modelType}&expired={Convert.ToInt64(timeStamp.TotalSeconds) + maxTime}&hotword_id={hotWordId}&needvad=1&nonce={Convert.ToInt64(timeStamp.TotalSeconds)}&reinforce_hotword={forceHotKey}&secretid={secretId}&timestamp={Convert.ToInt64(timeStamp.TotalSeconds)}&voice_format=1&voice_id={uuid}";
+        var ultSign =
+            $"asr.cloud.tencent.com/asr/v2/{appId}?engine_model_type={modelType}&expired={Convert.ToInt64(timeStamp.TotalSeconds) + maxTime}&hotword_id={hotWordId}&needvad=1&nonce={Convert.ToInt64(timeStamp.TotalSeconds)}&reinforce_hotword={forceHotKey}&secretid={secretId}&timestamp={Convert.ToInt64(timeStamp.TotalSeconds)}&voice_format=1&voice_id={uuid}";
         using var hmacsha1 = new HMACSHA1();
         hmacsha1.Key = Encoding.UTF8.GetBytes(secretKey);
-        return $"wss://asr.cloud.tencent.com/asr/v2/{appId}?engine_model_type={modelType}&expired={Convert.ToInt64(timeStamp.TotalSeconds) + maxTime}&hotword_id={hotWordId}&needvad=1&nonce={Convert.ToInt64(timeStamp.TotalSeconds)}&reinforce_hotword={forceHotKey}&secretid={secretId}&timestamp={Convert.ToInt64(timeStamp.TotalSeconds)}&voice_format=1&voice_id={uuid}&signature={HttpUtility.UrlEncode(Convert.ToBase64String(hmacsha1.ComputeHash(Encoding.UTF8.GetBytes(ultSign))))}";
+        return
+            $"wss://asr.cloud.tencent.com/asr/v2/{appId}?engine_model_type={modelType}&expired={Convert.ToInt64(timeStamp.TotalSeconds) + maxTime}&hotword_id={hotWordId}&needvad=1&nonce={Convert.ToInt64(timeStamp.TotalSeconds)}&reinforce_hotword={forceHotKey}&secretid={secretId}&timestamp={Convert.ToInt64(timeStamp.TotalSeconds)}&voice_format=1&voice_id={uuid}&signature={HttpUtility.UrlEncode(Convert.ToBase64String(hmacsha1.ComputeHash(Encoding.UTF8.GetBytes(ultSign))))}";
     }
 
     private string GetEngineModelTypeString() => engineModelType switch
